@@ -1,0 +1,631 @@
+
+Write an SQL query to swap the students between every pair of consecutive seats (id = 1 with id = 2, id = 3 with id = 4, etc.).
+If the total number of seats is odd, the student in the last seat should remain unchanged.
+
+Example 1:
+Input: 
+Seat table:
++----+---------+
+| id | student |
++----+---------+
+| 1  | Abbot   |
+| 2  | Doris   |
+| 3  | Emerson |
+| 4  | Green   |
+| 5  | Jeames  |
++----+---------+
+Output: 
++----+---------+
+| id | student |
++----+---------+
+| 1  | Doris   |
+| 2  | Abbot   |
+| 3  | Green   |
+| 4  | Emerson |
+| 5  | Jeames  |
++----+---------+
+
+Answer:
+SELECT
+  CASE
+    WHEN id % 2 = 1 AND id <> (SELECT MAX(id) FROM exe_temp1) THEN id + 1
+    WHEN id % 2 = 0 THEN id - 1
+    ELSE id
+  END AS id,
+  student
+FROM exe_temp1
+ORDER BY id;
+
+************************************************************************************
+Which records will be returned by applying INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, and CROSS JOIN between the given Table1 and Table2?
+
+
+Table1		Table2
++------+	+------+
+|  id  |    |  id  |
++------+    +------+
+|  1   |    |  1   |
+|  1   |    |  1   |
+|  2   |    |  2   |
+|  2   |    |  3   |
+|  4   |    | NULL |
+| NULL |    +------+
++------+
+
+************************************************************************************
+
+Write an SQL query to retrieve all employees and order them by hiring_date, placing employees with NULL or empty hiring_date values at the bottom of the result set?
+
+Input Table :-
+
++----+-------------+-------------+
+| id | name        | hiring_date |
++----+-------------+-------------+
+|  1 | John        | 2020-05-12  |
+|  2 | Alice       | NULL        |
+|  3 | Bob         | 2018-11-03  |
+|  4 | David       |             |
+|  5 | Emma        | 2021-01-20  |
++----+-------------+-------------+
+
+Expected Table:-
+
++----+-------------+-------------+
+| id | name        | hiring_date |
++----+-------------+-------------+
+|  3 | Bob         | 2018-11-03  |
+|  1 | John        | 2020-05-12  |
+|  5 | Emma        | 2021-01-20  |
+|  2 | Alice       | NULL        |
+|  4 | David       |             |
++----+-------------+-------------+
+
+Answer: 
+SELECT *
+FROM employees
+ORDER BY hiring_date NULLS LAST;
+
+************************************************************************************
+Write an SQL query to transform the data into a ledger-style format that shows credits, debits, and a running balance.
+
+Input Table:
+
++------------+----------------+--------+--------+
+| Date       | Description    | Type   | Amount |
++------------+----------------+--------+--------+
+| 12-Dec-24  | EMI Amount     | credit | 10000  |
+| 12-Dec-24  | paid to friend | debit  | 1000   |
+| 13-Dec-24  | Loan amount    | debit  | 5000   |
++------------+----------------+--------+--------+
+
+Expected Output:
+
++------------+----------------+--------+-------+---------+
+| Date       | Description    | Credit | Debit | Balance |
++------------+----------------+--------+-------+---------+
+| 12-Dec-24  | EMI Amount     | 10000  | 0     | 10000   |
+| 12-Dec-24  | paid to friend | 0      | 1000  | 9000    |
+| 13-Dec-24  | Loan amount    | 0      | 5000  | 4000    |
++------------+----------------+--------+-------+---------+
+
+WITH entries AS (
+  SELECT
+    "Date",
+    "Description",
+    "Type",
+    "Amount"::numeric(12,2) AS amount,
+    CASE WHEN "Type" = 'credit' THEN  "Amount"::numeric
+         WHEN "Type" = 'debit'  THEN - "Amount"::numeric
+    END AS signed_amount,
+    ROW_NUMBER() OVER (
+      PARTITION BY "Date"
+      ORDER BY CASE WHEN "Type"='credit' THEN 0 ELSE 1 END, "Description"
+    ) AS seq
+  FROM ledger
+)
+SELECT
+  to_char("Date",'YYYY-MM-DD')                  AS "Date",
+  "Description",
+  CASE WHEN "Type"='credit' THEN amount END     AS credit,
+  CASE WHEN "Type"='debit'  THEN amount END     AS debit,
+  SUM(signed_amount) OVER (
+    ORDER BY "Date", seq
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+  )                                             AS balance
+FROM entries
+ORDER BY "Date", seq;
+     
+
+
+************************************************************************************
+
+Write an SQL query to fetch the 3rd highest salary using window functions. Explain why you chose the specific window function.
+
++----+--------+
+| id | salary |
++----+--------+
+|  1 | 7000   |
+|  2 | 10000  |
+|  3 | 6000   |
+|  4 | 9000   |
+|  5 | 8000   |
+|  6 | 9000   |
++----+--------+
+
+************************************************************************************
+Write an SQL query to fetch the 3rd highest salary in each department.
+
++----+-------------+--------+
+| id | department  | salary |
++----+-------------+--------+
+|  1 | HR          | 5000   |
+|  2 | HR          | 7000   |
+|  3 | HR          | 6000   |
+|  4 | HR          | 7000   |
+|  5 | IT          | 9000   |
+|  6 | IT          | 8000   |
+|  7 | IT          | 7500   |
+|  8 | IT          | 9500   |
+|  9 | Sales       | 4000   |
+| 10 | Sales       | 4500   |
++----+-------------+--------+
+************************************************************************************
+Write an SQL query to find the list of unique customers and their orders where the orders belong to the category of FMCG products.
+
+Assume:
+customers table has: id (PK), name, …
+orders table has: order_id (PK), category, customer_id (FK → customers.id),
+
+Customers:            Orders:
++----+---------+      +----------+----------+-------------+
+| id | name    |      | order_id | category | customer_id |
++----+---------+      +----------+----------+-------------+
+|  1 | Alice   |      | 101      | FMCG     | 1           |
+|  2 | Bob     |      | 102      | Electronics | 1        |
+|  3 | Charlie |      | 103      | FMCG     | 2           |
++----+---------+      | 104      | FMCG     | 2           |
+                      | 105      | Fashion  | 3           |
+                      +----------+----------+-------------+
+
+Expected Output:
++-------------+---------------+----------+----------+
+| customer_id | customer_name | order_id | category |
++-------------+---------------+----------+----------+
+| 1           | Alice         | 101      | FMCG     |
+| 2           | Bob           | 103      | FMCG     |
+| 2           | Bob           | 104      | FMCG     |
++-------------+---------------+----------+----------+
+************************************************************************************
+Write an SQL query to calculate the 7-day moving average of sales for each product
+Input Table 
++------------+------------+--------------+
+| product_id | sale_date  | sales_amount |
++------------+------------+--------------+
+| P1         | 2024-01-01 | 100          |
+| P1         | 2024-01-02 | 200          |
+| P1         | 2024-01-03 | 150          |
+| P1         | 2024-01-04 | 300          |
+| P1         | 2024-01-05 | 250          |
+| P1         | 2024-01-06 | 400          |
+| P1         | 2024-01-07 | 350          |
+| P1         | 2024-01-08 | 500          |
++------------+------------+--------------+
+
+Expected Output
++------------+------------+------------------+
+| product_id | sale_date  | moving_avg_7_days|
++------------+------------+------------------+
+| P1         | 2024-01-01 | 100.0            |
+| P1         | 2024-01-02 | 150.0            |
+| P1         | 2024-01-03 | 150.0            |
+| P1         | 2024-01-04 | 187.5            |
+| P1         | 2024-01-05 | 200.0            |
+| P1         | 2024-01-06 | 233.3            |
+| P1         | 2024-01-07 | 250.0            |
+| P1         | 2024-01-08 | 307.1            |
++------------+------------+------------------+
+
+
+************************************************************************************
+Write a query to list managers whose salary is lower than their subordinate’s salary.
+
+Input Table:
+
++----+----------+-----------+---------+
+| id | name     | manager_id| salary  |
++----+----------+-----------+---------+
+|  1 | Alice    | 10        | 9000    |
+|  2 | Bob      | 5         | 12000   |
+|  3 | Charlie  | 1         | 11000   |
+|  4 | David    | 3         | 8000    |
+|  5 | Eva      | 1         | 9500    |
+|  6 | Frank    | 2         | 7000    |
++----+----------+-----------+---------+
+
++----------+
+| manager  |
++----------+
+| Alice    |   
++----------+
+
+************************************************************************************
+
+You have a table called sales with the columns: sale_id (unique identifier), customer_id, sale_date, amount
+Write an SQL query to retrieve the top 2 highest sales per customer within the last 30 days.
+
+Input Table:- 
+
++---------+-------------+------------+--------+
+| sale_id | customer_id | sale_date  | amount |
++---------+-------------+------------+--------+
+| 101     | 1           | 2025-08-05 |    500 |
+| 102     | 1           | 2025-08-15 |    700 |
+| 103     | 1           | 2025-08-20 |    300 |
+| 104     | 2           | 2025-08-12 |    900 |
+| 105     | 2           | 2025-08-22 |    850 |
+| 106     | 2           | 2025-08-28 |    400 |
++---------+-------------+------------+--------+
+
+Expected Output:-
+
++-------------+---------+------------+--------+
+| customer_id | sale_id | sale_date  | amount |
++-------------+---------+------------+--------+
+| 1           | 102     | 2025-08-15 |    700 |
+| 1           | 101     | 2025-08-05 |    500 |
+| 2           | 104     | 2025-08-12 |    900 |
+| 2           | 105     | 2025-08-22 |    850 |
++-------------+---------+------------+--------+
+
+
+Answer: 
+  select *
+  from (select customer_id, sale_id,sale_date, amount, 
+  dense_rank() over (partition by customer_id order by amount DESC) as rk 
+  from public.sales)
+  where rk in (1,2) and sale_date >= current_date - interval '30 day';
+************************************************************************************
+
+You are given a table ExamResults with the following columns: id ,Name, Subject, Result
+Write an SQL query to find students who have passed in all the exams they appeared for.
+
+Input Table:-
+
++----+------+---------+--------+
+| id | Name | Subject | Result |
++----+------+---------+--------+
+| 1  | A    | AA      | Pass   |
+| 2  | B    | AA      | Pass   |
+| 3  | C    | CC      | Fail   |
+| 3  | C    | AA      | Fail   |
+| 2  | B    | BB      | Fail   |
++----+------+---------+--------+
+
+Expected Output:-
+
++----+------+ 
+| id | Name | 
++----+------+ 
+| 1  | A    | 
++----+------+
+************************************************************************************
+You have two tables: Employee : emp_id , emp_name
+Salary: emp_id, salary_date, salary
+Q. Write an SQL query to calculate the percentage hike in salary for each employee compared to their previous salary record.
+Input Table
++--------+-------------+--------+		+--------+----------+
+| emp_id | salary_date | salary |		| emp_id | emp_name |
++--------+-------------+--------+		+--------+----------+
+| 1      | 2024-01-01  | 50000  |		| 1      | Alice    |
+| 1      | 2025-01-01  | 60000  |		| 2      | Bob      |
+| 2      | 2024-06-01  | 45000  |		| 3      | Carol    |
+| 2      | 2025-01-01  | 49500  |		+--------+----------+
+| 3      | 2024-03-01  | 70000  |		
+| 3      | 2025-01-01  | 73500  |		
++--------+-------------+--------+		
+
+Expected Output:-
+
++--------+----------+-------------+--------+-------------+--------+--------------+
+| emp_id | emp_name | prev_salary | p_date | curr_salary | c_date | hike_percent |
++--------+----------+-------------+--------+-------------+--------+--------------+
+| 1      | Alice    | 50000       | 2024-01-01 | 60000  | 2025-01-01 | 20.00     |
+| 2      | Bob      | 45000       | 2024-06-01 | 49500  | 2025-01-01 | 10.00     |
+| 3      | Carol    | 70000       | 2024-03-01 | 73500  | 2025-01-01 | 5.00      |
++--------+----------+-------------+--------+-------------+--------+--------------+
+Ans: SELECT
+  emp_id,
+  effective_date,
+  salary,
+  LAG(salary) OVER (
+    PARTITION BY emp_id
+    ORDER BY effective_date
+  ) AS prev_salary,
+  ROUND(
+    (salary - LAG(salary) OVER (PARTITION BY emp_id ORDER BY effective_date))
+    * 100.0 / NULLIF(LAG(salary) OVER (PARTITION BY emp_id ORDER BY effective_date), 0)
+  , 2) AS pct_change -- positive = hike, negative = drop
+FROM employee_salaries
+ORDER BY emp_id, effective_date;
+
+
+************************************************************************************
+Write an SQL query to calculate the 3-month rolling sales for each product using window functions.
+
+Input Table:
++---------+------------+------------+--------+
+| sale_id | product_id | sale_date  | amount |
++---------+------------+------------+--------+
+| 1       | P1         | 2025-01-01 | 100    |
+| 2       | P1         | 2025-02-15 | 200    |
+| 3       | P1         | 2025-03-05 | 300    |
+| 4       | P1         | 2025-04-10 | 400    |
+| 5       | P2         | 2025-01-20 | 500    |
+| 6       | P2         | 2025-02-25 | 600    |
+| 7       | P2         | 2025-04-02 | 700    |
++---------+------------+------------+--------+
+
+Expected Output:-
++------------+------------+------------+------------------+
+| product_id | sale_date  | amount     | rolling_3m_sales |
++------------+------------+------------+------------------+
+| P1         | 2025-01-01 | 100        | 100              |
+| P1         | 2025-02-15 | 200        | 300              |
+| P1         | 2025-03-05 | 300        | 600              |
+| P1         | 2025-04-10 | 400        | 900              |
+| P2         | 2025-01-20 | 500        | 500              |
+| P2         | 2025-02-25 | 600        | 1100             |
+| P2         | 2025-04-02 | 700        | 1300             |
++------------+------------+------------+------------------+
+************************************************************************************
+Write an SQL query to display the names (ids) of teachers who teach Math only (i.e., they don’t teach any other subject).
+
+Input Table:-
+
++----+---------+
+| id | subject |
++----+---------+
+| 1  | Math    |
+| 2  | Math    |
+| 4  | Chem    |
+| 5  | Math    |
+| 2  | Eng     |
+| 3  | Phy     |
++----+---------+
+
+Expected Table:- 
++----+
+| id |
++----+
+| 1  |
+| 5  |
++----+
+************************************************************************************
+Write an SQL query to delete the duplicate records while keeping only one unique record for each duplicate set.
+
++--------+----+-------+--------+
+| emp_id | id | name  | salary |
++--------+----+-------+--------+
+| 1      | 1  | A     | 5000   |
+| 2      | 2  | B     | 6000   |
+| 3      | 2  | B     | 6000   |  <-- duplicate
+| 4      | 3  | C     | 7000   |
+| 5      | 4  | D     | 8000   |
+| 6      | 4  | D     | 8000   |  <-- duplicate
++--------+----+-------+--------+
+
+Expected Output:-
+
++--------+----+-------+--------+
+| emp_id | id | name  | salary |
++--------+----+-------+--------+
+| 1      | 1  | A     | 5000   |
+| 2      | 2  | B     | 6000   |
+| 4      | 3  | C     | 7000   |
+| 5      | 4  | D     | 8000   |
++--------+----+-------+--------+
+************************************************************************************
+Write an SQL query to find the maximum number of consecutive login days for each user.
+
+Input Table:-
+
++----+----------+------------+
+| id |  value   | login_date |
++----+----------+------------+
+| 1  | val1     | 01-08-2025 |
+| 1  | val2     | 02-08-2025 |
+| 1  | val2     | 03-08-2025 |
+| 1  | val3     | 05-08-2025 |
+| 2  | val4     | 01-08-2025 |
+| 2  | val5     | 02-08-2025 |
+| 2  | val5     | 05-08-2025 |
+| 3  | val7     | 01-08-2025 |
++----+----------+------------+
+
+Expected Output:- 
+
++----+------------------+
+| id | max_consecutive  |
++----+------------------+
+| 1  | 3                |
+| 2  | 2                |
+| 3  | 1                |
++----+------------------+
+
+************************************************************************************
+Write an SQL query to merge two tables Basket1 and Basket2 on the Product field so that the output includes all values from both tables
+
+Input Table
++---------+
+| Product |
++---------+
+| Sugar   |
+| Bread   |
+| Juice   |
+| Soda    |
+| Flour   |
++---------+
+
++---------+
+| Product |
++---------+
+| Sugar   |
+| Bread   |
+| Butter  |
+| Cheese  |
+| Fruit   |
++---------+
+
+Expected Output:-
+
++----------+----------+
+| Bucket_1 | Bucket_2 |
++----------+----------+
+| Sugar    | Sugar    |
+| Bread    | Bread    |
+| Juice    | NULL     |
+| Soda     | NULL     |
+| Flour    | NULL     |
+| NULL     | Butter   |
+| NULL     | Cheese   |
+| NULL     | Fruit    |
++----------+----------+
+
+************************************************************************************
+Write an SQL query to perform a pivot operation that shows one row per ID with separate columns for each phone type.
+
+Input Table:
+
++------+-----------+--------------+
+| ID   | CELL_TYPE | CELL_NO      |
++------+-----------+--------------+
+| 1001 | Cellular  | 555-897-5421 |
+| 1001 | Work      | 555-897-6542 |
+| 1001 | Home      | 555-698-9874 |
+| 2002 | Cellular  | 555-963-6544 |
+| 2002 | Work      | 555-812-9856 |
+| 3003 | Cellular  | 555-987-6541 |
++------+-----------+--------------+
+
+
+Expected Output:-
+
++------+--------------+--------------+--------------+
+| id   | Cellular     | Work         | Home         |
++------+--------------+--------------+--------------+
+| 1001 | 555-897-5421 | 555-897-6542 | 555-698-9874 |
+| 2002 | 555-963-6544 | 555-812-9856 | NULL         |
+| 3003 | 555-987-6541 | NULL         | NULL         |
++------+--------------+--------------+--------------+
+
+************************************************************************************
+Write an SQL query to find the candidate_id values of candidates who have all the required descriptions.
+Input Table:-
++--------------+-------------+
+| candidate_id | Description |
++--------------+-------------+
+| 1001         | Geologist   |
+| 1001         | Astrogator  |
+| 1001         | BioChemist  |
+| 1001         | Technician  |
+| 1001         | Mechanic    |
+| 2002         | Geologist   |
+| 3003         | Geologist   |
+| 3003         | Astrogator  |
+| 4004         | BioChemist  |
++--------------+-------------+
+
+Expected Output:-
+
++--------------+
+| candidate_id |
++--------------+
+| 1001         |
++--------------+
+
+************************************************************************************
+Write a query to return records that are unique to TableB when comparing both tables on col_id.
+Input Table:-
+TableA
++--------+
+| col_id |
++--------+
+| 1      |
+| 1      |
+| 2      |
+| NULL   |
++--------+
+TableB
++--------+
+| col_id |
++--------+
+| 1      |
+| 1      |
+| NULL   |
+| 3      |
+| 5      |
++--------+
+
+
+Expected Table:-
+
++--------+--------+
+| col_id | col_id |
++--------+--------+
+| NULL   | 3      |
+| NULL   | 5      |
++--------+--------+
+
+************************************************************************************
+Write a query find all employees whose salary is greater than the average salary of their department.
+
+Input Table:- 
+
++----+---------+-------+---------+
+| id | name    | sal   | dept    |
++----+---------+-------+---------+
+|  1 | Alice   | 60000 | HR      |
+|  2 | Bob     | 75000 | Finance |
+|  3 | Charlie | 50000 | IT      |
+|  4 | Diana   | 82000 | IT      |
+|  5 | Ethan   | 55000 | Sales   |
+|  6 | Fiona   | 67000 | Finance |
++----+---------+-------+---------+
+
+Expected Output:-
+
++----+-------+-------+---------+
+| id | name  | sal   | dept    |
++----+-------+-------+---------+
+|  2 | Bob   | 75000 | Finance |
+|  4 | Diana | 82000 | IT      |
++----+-------+-------+---------+
+
+************************************************************************************
+Write a query to find the starting city and the ending city for each passenger’s complete journey.
+Input Table:-
+
++----+-----------+-------------+
+| id | source    | destination |
++----+-----------+-------------+
+|  1 | Mumbai    | Hyderabad   |
+|  1 | Hyderabad | Bangalore   |
+|  2 | Delhi     | Jaipur      |
+|  2 | Jaipur    | Agra        |
+|  3 | Chennai   | Pune        |
+|  3 | Pune      | Goa         |
+|  3 | Goa       | Mysore      |
++----+-----------+-------------+
+
+
+Expected Output:-
+
++----+-----------+-----------+
+| id | start     | end       |
++----+-----------+-----------+
+|  1 | Mumbai    | Bangalore |
+|  2 | Delhi     | Agra      |
+|  3 | Chennai   | Mysore    |
++----+-----------+-----------+
+************************************************************************************
+

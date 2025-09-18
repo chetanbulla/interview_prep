@@ -1,0 +1,313 @@
+Given a list of integers, return True if the array contains a 3 next to a 3 somewhere.
+Desired output:
+has_33([1, 3, 3]) → True
+has_33([1, 3, 1, 3]) → False
+has_33([3, 1, 3]) → False
+has_33([3,3,1]) → True
+
+def has33(X):
+  for i in range (0, len(x)-1):
+      if (x[i]==x[i+1] and x[i]==3:
+          return true
+  Return false
+
+===================================
+
+Write a function that returns the lesser of two given numbers if both numbers are even, but returns the greater if one or both numbers are odd.
+
+Write a function that returns the lesser of two given numbers if both numbers are even, but returns the greater if one or both numbers are odd.
+Desired output:
+lesser_of_two_evens(2,4)---> 2
+lesser_of_two_evens(2,3)---> 3
+lesser_of_two_evens(3,4)---> 4
+
+def even_odd_number(x,y):
+    if X%2==0 and Y%2==0:
+       return (X>Y)?X:Y;
+   elif X%2==1 OR Y%2==1:
+        return (X>Y)?X:Y;
+
+
+=======================================
+Write a Python function that takes a list and returns a new list with unique elements of the first list.
+Sample List : [1,1,1,1,2,2,3,3,3,3,4,5]
+Unique List : [1, 2, 3, 4, 5]
+
+Ans: print(lst(set(lst(x)))
+
+======================================
+Write a Python function to check whether a string is pangram or not. (Assume the string passed in does not have any punctuation)
+Note:A pangram is a sentence containing every letter of the alphabet.
+
+Answer:
+def is_pangram(str):
+  Alphabet = []
+  for i in range(97, 123):
+    Alphabet += chr(i)
+  str_list = sorted(list(set(str.replace(' ','').lower())))
+  if Alphabet == str_list:
+    return True
+  return False
+
+if __name__ == '__main__':
+  print(is_pangram("A quick brown fox jumps over the lazy dog"))
+
+===================
+def is_pangram(str):
+  Alphabet = []
+  for i in range(97, 123):
+    Alphabet += chr(i)
+  str_list = sorted(list(set(str.replace(' ','').lower())))
+  if Alphabet == str_list:
+    return True
+  return False
+
+if __name__ == '__main__':
+  print(is_pangram("A quick brown fox jumps over the lazy dog"))
+
+===============================
+Write a function takes a two-word string and returns True if both words begin with same letter
+animal_crackers('Crazy Chocolate') --> True
+animal_crackers('Lazy Dog') --> False
+
+Ans: 
+
+def animal_crackesrs(a):
+  lst=a.split(" ")
+  if lst[0][0]==lst[1][0]:
+    return True
+  else:
+    return False
+if __name__ == "__main__":
+  print(animal_crackesrs("Ai Hello"))
+  print(animal_crackesrs("Hi Hello"))
+
+=======================================
+Write a function that takes in a list of integers and returns True if it contains 007 in order
+ spy_game([1,2,4,0,0,7,5]) --> True
+ spy_game([1,0,2,4,0,5,7]) --> True
+ spy_game([1,7,2,0,4,5,0]) --> False
+
+
+def spy_game(lst: list) -> bool:
+    for i in range(0, len(lst)):
+        if i <= len(lst)-2:
+            if lst[i] == 0 and lst[i+1] == 0 and lst[i+2] == 7:
+                return True
+        else:
+            return False
+
+alt sol
+
+def spy_game(lst: list) -> bool:
+  for i in range(0, len(lst)-2):
+    if lst[i] == 0 and lst[i+1] == 0 and lst[i+2] == 7:
+      return True
+  return False
+
+
+================================
+
+Define a function called myfunc that takes in a string,
+and returns a matching string where every even letter is uppercase, and every odd letter is lowercase. 
+Desired output:
+myfunc('aNiMaL')-->True
+
+def xxx(Str):
+  trg=[]
+  for i in range (0, len(str)-1):
+      if i % 2==0:
+        trg.append(str[i].lower())
+      else 
+        trg.append(str[i].upper())
+      if str[i]!=trg[i]:
+        return false
+  return true
+
+print(xxx['aNiMaL'))
+        
+         
+=================
+
+Write a Python function that accepts a string and calculates the number of upper case letters and lower case letters.
+
+Sample String : 'Hello Mr. Rogers, how are you this fine Tuesday?'
+Expected Output : 
+No. of Upper case characters : 4
+No. of Lower case Characters : 33
+
+def func(str):
+   uc=0, lc=0;
+   for i in range (o, len(str))
+       if str[i].islower()
+          lc++:
+       else
+          up++;
+   print(uc,lc);
+
+=================
+Write a Python function that checks whether a word or phrase is palindrome or not.
+Example of Palindrome:
+Hannah
+Anna
+
+Ans:
+def palindrome(str1):
+  if str1.lower()==str1[::-1].lower():
+    return True
+  else:
+    return False
+if __name__=='__main__':
+  print(palindrome('Hannah'))
+  print(palindrome('Anba'))
+
+
+
+==================
+Write a Python function to multiply all the numbers in list.
+Sample list : [1,2,3,-4]
+Expected Output: -24
+
+def mul(lst):
+  mul=1
+  for i in range(0, len(lst)):
+    mul=mul*lst[i]
+  print (mul)
+
+
+===============================
+Note:A year that is evenly divisible by 100 is a leap year only if it is also evenly divisible by 400.
+
+Desired Output:
+is_leap(1996)-->Leap year
+is_leap(2100)-->not a Leap year
+is_leap(2000)—>Leap year
+
+def is_leap(yr):
+  if (yr%400==0 or (yr%4==0 and yr%100!=0)):
+    return 'Leap Year'
+  else:
+    return 'Not Leap Year'
+if __name__=='__main__':
+  print(is_leap(1996))
+  print(is_leap(2100))
+  print(is_leap(2000))
+
+===================================
+
+Python coding question:
+Write a function that capitalizes the first and fifth letters of a name.
+
+TC 1:capitalize("Rushabh")
+ 'RushAbh'
+TC 2:capitalize("act")
+  'Name is too short!'
+
+
+
+======================================
+Write a function that capitalizes the first and fifth letters of a name.
+
+TC 1:capitalize("Rushabh")
+ 'RushAbh'
+TC 2:capitalize("act")
+  'Name is too short!'
+
+
+capitalize_15 = lambda s: "".join(
+    char.upper() if i in {1, 5} else char
+    for i, char in enumerate(s, 1)
+)
+
+capitalize_15 = lambda s: "".join(
+    char.upper() if i in {1, 5} else char
+    for i, char in enumerate(s, 1)
+)
+
+===========================
+Print the list of integers from through as a string, without spaces.
+Sample Input
+3
+Sample Output
+123
+
+def num(n):
+  for i in range(n):
+    print(i,end=" ")
+if __name__=='__main__':
+  num(3)
+
+==================
+
+Print only the words that start with "s" in a sentence.
+
+Input:
+Salad is healthy snack.
+
+def xxx(str):
+  str1=str.split(' ')
+  for i in range (0, len(str1):
+     if i[0].islower()=='s':
+       print i
+xxx('Salad is healthy snack')
+
+====================================
+Python coding question:
+
+Write a program that prints the integers from 1 to 100. 
+But for multiples of three print "Fizz" instead of the number, 
+and for the multiples of five print "Buzz".
+For numbers which are multiples of both three and five print "FizzBuzz".
+
+
+def xxx(str):
+  str1=str.split(' ')
+  for i in str1:
+     if i[0].islower()=='s':
+       print(i)
+       
+xxx('Salad is healthy snack')
+
+
+=======================
+
+Use a List Comprehension to create a list of all numbers between 1 and 50 that are divisible by 3.
+
+print(x for x in range(1, 51) if x % 3 == 0)
+
+===========
+Write a Python code to accept a string and count the number of vowels and consonants.
+Print them separately.
+
+hide_card = lambda card: "$" * (len(card)-4) + card[-4:]
+
+================================================
+Write a Python code to accept a string and count the number of vowels and consonants.
+Print them separately.
+
+strr = input()
+v_count = c_count = 0
+tmp = 'aeiou'
+for i in strr:
+    if i.lower() in tmp:
+            v_count += 1
+    else: c_count += 1
+print(strr)
+print(v_count,c_count)
+
+=================================
+You are given two numbers a and b. Create a function that returns the next number greater than a and b and divisible by b.
+Examples
+divisible_by_b(17, 8) ➞ 24
+
+divisible_by_b(98, 3) ➞ 99
+
+divisible_by_b(14, 11) ➞ 22
+Notes:
+a will always be greater than b.
+
+
+def waw (no1, no2):
+  for i in range (no1, 99):
+      if i% no2 == 0:
+         return i
