@@ -51,7 +51,7 @@ Table1		Table2
 |  4   |    | NULL |
 | NULL |    +------+
 +------+
-
+Ans: Try your own
 ************************************************************************************
 
 Write an SQL query to retrieve all employees and order them by hiring_date, placing employees with NULL or empty hiring_date values at the bottom of the result set?
@@ -80,7 +80,7 @@ Expected Table:-
 |  4 | David       |             |
 +----+-------------+-------------+
 
-Answer: 
+Answer: (postgresSQL)
 SELECT *
 FROM employees
 ORDER BY hiring_date NULLS LAST;
@@ -152,6 +152,7 @@ Write an SQL query to fetch the 3rd highest salary using window functions. Expla
 |  6 | 9000   |
 +----+--------+
 
+Ans: Try your own
 ************************************************************************************
 Write an SQL query to fetch the 3rd highest salary in each department.
 
@@ -169,6 +170,8 @@ Write an SQL query to fetch the 3rd highest salary in each department.
 |  9 | Sales       | 4000   |
 | 10 | Sales       | 4500   |
 +----+-------------+--------+
+
+Ans: Try your own
 ************************************************************************************
 Write an SQL query to find the list of unique customers and their orders where the orders belong to the category of FMCG products.
 
@@ -195,6 +198,8 @@ Expected Output:
 | 2           | Bob           | 103      | FMCG     |
 | 2           | Bob           | 104      | FMCG     |
 +-------------+---------------+----------+----------+
+
+Ans: Easy - Try own
 ************************************************************************************
 Write an SQL query to calculate the 7-day moving average of sales for each product
 Input Table 
@@ -225,7 +230,7 @@ Expected Output
 | P1         | 2024-01-08 | 307.1            |
 +------------+------------+------------------+
 
-
+Ans: 
 ************************************************************************************
 Write a query to list managers whose salary is lower than their subordinate’s salary.
 
@@ -247,6 +252,7 @@ Input Table:
 +----------+
 | Alice    |   
 +----------+
+Ans: self join and try 
 
 ************************************************************************************
 
@@ -308,6 +314,9 @@ Expected Output:-
 +----+------+ 
 | 1  | A    | 
 +----+------+
+
+
+
 ************************************************************************************
 You have two tables: Employee : emp_id , emp_name
 Salary: emp_id, salary_date, salary
@@ -628,4 +637,5 @@ Expected Output:-
 |  3 | Chennai   | Mysore    |
 +----+-----------+-----------+
 ************************************************************************************
+
 
